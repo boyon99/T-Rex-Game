@@ -1,7 +1,10 @@
 let canvas = document.getElementById('canvas');
 let ctx = canvas.getContext('2d');
 
-canvas.width = window.innerWidth - 100;
+let isJumping = false;
+let jumpTimer = 0;
+
+canvas.width = window.innerWidth;
 canvas.height = window.innerHeight - 100;
 
 // 공룡
@@ -21,7 +24,7 @@ dino.draw()
 // 장애물
 class Cactus {
   constructor() {
-    this.x = window.innerWidth - 200;
+    this.x = window.innerWidth;
     this.y = 200;
     this.width = 50;
     this.height = 50;
@@ -49,12 +52,38 @@ function frames() {
     cactus_box.push(cactus);
   }
 
-  cactus_box.forEach((a)=>{
+  cactus_box.forEach((a, i, o)=>{
+    // x좌표가 0 미만이면 제거
+    if(a.x < 0){
+      o.splice(i, 1)
+    }
+
     a.x--;
     a.draw()
   })
+
+  if(isJumping === true){
+    dino.y-= 2;
+    jumpTimer+= 2;
+  } else{
+    if(dino.y < 200){
+      dino.y+= 2;      
+    }
+  }
+
+  if(jumpTimer > 100){
+    isJumping = false;
+    jumpTimer = 0;
+  }
 
   dino.draw()
 }
 
 frames()
+
+
+document.addEventListener('keydown', function(e){
+  if(e.code === 'Space'){
+    isJumping = true;
+  }
+})
