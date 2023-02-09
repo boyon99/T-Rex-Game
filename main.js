@@ -9,7 +9,7 @@ canvas.height = window.innerHeight - 100;
 
 // 공룡
 let dino = {
-  x: 10,
+  x: 50,
   y: 200,
   width: 50,
   height: 50,
@@ -39,15 +39,16 @@ class Cactus {
 let timer = 0;
 let cactus_box = [];
 
+let animation;
+
 // animation
 function frames() {
-  requestAnimationFrame(frames);
+  animation = requestAnimationFrame(frames);
   timer++;
   
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-
-  if(timer%200 === 0){
+  if(timer%120 === 0){
     let cactus = new Cactus();
     cactus_box.push(cactus);
   }
@@ -58,16 +59,19 @@ function frames() {
       o.splice(i, 1)
     }
 
-    a.x--;
+    a.x-= 3;
+
+    isCollision(dino, a); // 충돌확인
     a.draw()
   })
 
+  // 점프
   if(isJumping === true){
-    dino.y-= 2;
-    jumpTimer+= 2;
+    dino.y-= 3;
+    jumpTimer+= 3;
   } else{
     if(dino.y < 200){
-      dino.y+= 2;      
+      dino.y+= 3;      
     }
   }
 
@@ -81,7 +85,20 @@ function frames() {
 
 frames()
 
+// 충돌확인
+function isCollision(dino, cactus){
+  let differenceX = cactus.x - (dino.x + dino.width);
+  let differenceY = cactus.y - (dino.y + dino.height);
 
+  if(differenceX < 0 && differenceY < 0){
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    cancelAnimationFrame(animation) // 게임중단
+  }
+}
+
+
+
+// 스페이스 이벤트 추가
 document.addEventListener('keydown', function(e){
   if(e.code === 'Space'){
     isJumping = true;
